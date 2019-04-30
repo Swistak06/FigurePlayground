@@ -3,18 +3,20 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".MainMenu">
+             tools:context=".MainMenuFragment">
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" android:weightSum="100">
         <Button
-                android:text="Button"
+                android:text="Flat Figures"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/button"/>
+                android:layout_height="match_parent" android:id="@+id/FlatFiguresBtn" android:layout_weight="50"
+                android:layout_margin="15dp"/>
         <Button
-                android:text="Button"
+                android:text="Solid Figures"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/button3"/>
+                android:layout_height="match_parent" android:id="@+id/SolidFiguresBtn" android:layout_weight="50"
+                android:layout_margin="15dp"/>
     </LinearLayout>
 </FrameLayout>
