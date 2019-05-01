@@ -21,8 +21,8 @@ class FigureListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_figure_list, container, false)
 
         if(mMode == 0){
-            itemList = arrayOf(FigureListItem(R.drawable.flat_fig, "Triangle"),FigureListItem(R.drawable.flat_fig, "Square")
-                ,FigureListItem(R.drawable.flat_fig, "Rectangle"),FigureListItem(R.drawable.flat_fig, "Diamond"),FigureListItem(R.drawable.flat_fig, "Circle"))
+            itemList = arrayOf(FigureListItem(R.drawable.triangle, "Triangle"),FigureListItem(R.drawable.square, "Square")
+                ,FigureListItem(R.drawable.rectangle, "Rectangle"),FigureListItem(R.drawable.diamond, "Diamond"),FigureListItem(R.drawable.circle, "Circle"))
         }
         else{
             itemList = arrayOf(FigureListItem(R.drawable.flat_fig, "Cube"),FigureListItem(R.drawable.flat_fig, "Sphere")

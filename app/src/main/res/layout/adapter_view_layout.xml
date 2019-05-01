@@ -20,5 +20,5 @@
             android:id="@+id/RightSide"
             android:layout_weight="40"
             android:gravity="center|start"
-    />
+            android:textSize="24sp" android:textStyle="bold" android:textColor="@android:color/black"/>
 </LinearLayout>
