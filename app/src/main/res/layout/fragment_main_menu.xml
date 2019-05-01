@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".MainMenuFragment">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:weightSum="100">
+        <Button
+                android:text="Flat Figures"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/FlatFiguresBtn" android:layout_weight="50"
+                android:layout_margin="15dp"/>
+        <Button
+                android:text="Solid Figures"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/SolidFiguresBtn" android:layout_weight="50"
+                android:layout_margin="15dp"/>
+    </LinearLayout>
+</FrameLayout>
