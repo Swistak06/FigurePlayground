@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_main_menu.view.*
+import kotlinx.android.synthetic.main.fragment_playground.*
 
 
 class MainMenuFragment : Fragment() {
@@ -26,8 +27,6 @@ class MainMenuFragment : Fragment() {
         view.SolidFiguresBtn.setOnClickListener {
             listener?.showFiguresListView(1)
         }
-
-
         // Inflate the layout for this fragment
         return view
     }
@@ -38,7 +37,7 @@ class MainMenuFragment : Fragment() {
         if (context is MainMenuFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement PlaygroundFrListener")
         }
     }
 

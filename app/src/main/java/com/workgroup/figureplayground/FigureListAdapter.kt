@@ -13,8 +13,6 @@ class FigureListAdapter(context : Context,resource : Int, objects : Array<Figure
     val res = resource
     private val con = context
 
-
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val imageID = getItem(position).imageId
         val figureName = getItem(position).figureName
