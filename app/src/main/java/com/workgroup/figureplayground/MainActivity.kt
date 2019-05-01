@@ -1,11 +1,10 @@
 package com.workgroup.figureplayground
 
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 
-class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFragmentListener, PlaygroundFragment.PlaygroundFrListener,
+class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, PlaygroundFragment.PlaygroundFrListener,
     FigureListFragment.FigureListFrListener {
 
     private val manager: FragmentManager = supportFragmentManager
