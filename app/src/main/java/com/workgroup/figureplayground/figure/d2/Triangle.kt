@@ -6,103 +6,78 @@ import android.graphics.Paint
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.Point
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Triangle(context: Context) : View(context) {
+class Triangle(context: Context) : Figure(context) {
+
+    private val paint = Paint()
 
     var isTouched = false
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     var moveEnabled = false
-    var pointTouched = 0;
+    var pointTouched = 0
     var timer = 0L
     var distance = 0f
     var diff = 0L
-    var action = 0
-    var eventX = 0f
-    var eventY = 0f
 
+    //For thread in onTouchEvent
+    private var startEventX = 0f
+    private var startEventY = 0f
+    private var startEventAction = 0
 
-    var poitsXValues = floatArrayOf(0.25f*right,0.75f*right,0.5f*right)
-    var poitsYValues = floatArrayOf(0.25f*bottom,0.25f*bottom,0.5f*bottom)
-
-
-    fun initValues(){
-        poitsXValues[0] = 0.25f*right
-        poitsYValues[0] = 0.25f*bottom
-
-        poitsXValues[1] = 0.75f*right
-        poitsYValues[1] = 0.25f*bottom
-
-        poitsXValues[2] = 0.5f*right
-        poitsYValues[2] = 0.75f*bottom
+    init {
+        paint.setARGB(255, 255, 0, 0)
+        paint.style = Paint.Style.FILL_AND_STROKE
+        paint.strokeWidth = 5f
     }
 
-
-
     override fun onDraw(canvas: Canvas) {
-        val paint = Paint()
-        if(poitsXValues[0] == 0f)
-            initValues()
-        paint.setARGB(255, 255, 0, 0)
-        paint.strokeWidth = 4f
-        paint.style = Paint.Style.STROKE
-        canvas.drawCircle(poitsXValues[0],poitsYValues[0],10f,paint)
-        canvas.drawCircle(poitsXValues[1],poitsYValues[1],30f,paint)
-        canvas.drawCircle(poitsXValues[2],poitsYValues[2],30f,paint)
 
-        canvas.drawLine(poitsXValues[0], poitsYValues[0],poitsXValues[1],poitsYValues[1],paint)
-        canvas.drawLine(poitsXValues[1],poitsYValues[1],poitsXValues[2],poitsYValues[2],paint)
-        canvas.drawLine(poitsXValues[2], poitsYValues[2], poitsXValues[0],poitsYValues[0],paint)
+        canvas.drawCircle(points[0].x, points[0].y, CIRCLE_RADIUS, paint)
+        canvas.drawCircle(points[1].x, points[1].y, CIRCLE_RADIUS, paint)
+        canvas.drawCircle(points[2].x, points[2].y, CIRCLE_RADIUS, paint)
+
+        canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint)
+        canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint)
+        canvas.drawLine(points[2].x, points[2].y, points[0].x, points[0].y, paint)
     }
 
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        eventX = event!!.x
-        eventY = event.y
-        action = event.action
+        startEventX = event!!.x
+        startEventY = event.y
+        startEventAction = event.action
+
+        val eventPoint = Point(event.x, event.y)
 
         if(event.action == android.view.MotionEvent.ACTION_DOWN && !isTouched){
-            val distances = floatArrayOf(0f,0f,0f)
 
-            distances[0] = countDistance(poitsXValues[0] ,poitsYValues[0],event.x , event.y)
-            distances[1] = countDistance(poitsXValues[1] ,poitsYValues[1],event.x , event.y)
-            distances[2] = countDistance(poitsXValues[2] ,poitsYValues[2],event.x , event.y)
+            val distances = calculateDistancesFromPoint(eventPoint)
+            val minVal = distances.min()!!
 
-            val minVal = minOf(distances[0],distances[1],distances[2])
-
-
-            if(minVal < 30){
+            if(minVal < 1.2 * CIRCLE_RADIUS){
                 distance = minVal
                 isTouched = true
-                when(minVal){
-                    distances[0] -> {
+                timer  = System.currentTimeMillis()
+                pointTouched = distances.indexOf(minVal)
 
-                        timer  = System.currentTimeMillis()
-                        pointTouched = 1
-                    }
-                    distances[1] -> {
-                        timer  = System.currentTimeMillis()
-                        pointTouched = 2
-                    }
-                    distances[2] -> {
-                        timer  = System.currentTimeMillis()
-                        pointTouched = 3
-                    }
-                }
                 thread(start = true) {
                     var condition = true
-                    while(diff < 1000){
+                    while(diff < SECOND){
+
                         diff = System.currentTimeMillis() - timer
-                        when(pointTouched){
-                            1-> distance = countDistance(poitsXValues[0] ,poitsYValues[0],eventX ,eventY)
-                            2-> distance = countDistance(poitsXValues[1] ,poitsYValues[1],eventX , eventY)
-                            3-> distance = countDistance(poitsXValues[2] ,poitsYValues[2],eventX , eventY)
-                        }
-                        if(distance > 30 || action == android.view.MotionEvent.ACTION_UP){
+                        distance = countDistance(points[pointTouched].x, points[pointTouched].y, startEventX, startEventY)
+
+                        if(distance > 1.2 * CIRCLE_RADIUS || startEventAction == android.view.MotionEvent.ACTION_UP){
                             condition = false
                             break
                         }
@@ -120,33 +95,46 @@ class Triangle(context: Context) : View(context) {
             }
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && moveEnabled){
-
-            when(pointTouched){
-                1 ->{
-                    poitsXValues[0] = event.x
-                    poitsYValues[0] = event.y
-                }
-                2->{
-                    poitsXValues[1] = event.x
-                    poitsYValues[1] = event.y
-                }
-                3->{
-                    poitsXValues[2] = event.x
-                    poitsYValues[2] = event.y
-                }
-            }
+            points[pointTouched].x = eventPoint.x
+            points[pointTouched].y = eventPoint.y
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
-            pointTouched = 0
+            pointTouched = -1
             isTouched = false
             moveEnabled = false
             timer = 0
         }
+
         return true
+    }
+
+    private fun calculateDistancesFromPoint(point: Point): List<Float>{
+        val distances = ArrayList<Float>()
+
+        points.forEach {
+            distances.add(countDistance(it.x, it.y, point.x , point.y))
+        }
+        return distances
     }
 
     private fun countDistance(pointXA : Float, pointYA : Float, pointXB : Float, pointYB : Float): Float{
         return sqrt((pointXA - pointXB).pow(2) + (pointYA- pointYB).pow(2))
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        generatePoints()
+    }
+
+    private fun generatePoints(){
+        points = arrayListOf(Point(0.5f*width, 0.25f*height),
+            Point(0.25f*width, 0.75f*height),
+            Point(0.75f*width, 0.75f*height))
+    }
+
+    companion object {
+        const val CIRCLE_RADIUS: Float = 30.0f
+        const val SECOND: Int = 1000
     }
 }

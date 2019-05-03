@@ -2,18 +2,18 @@ package com.workgroup.figureplayground.figure;
 
 public class Vector extends Point {
 
-    private Double z;
+    private Float z;
 
-    public Vector(Double x, Double y, Double z) {
+    public Vector(Float x, Float y, Float z) {
         super(x, y);
         this.z = z;
     }
 
-    public Double getZ() {
+    public Float getZ() {
         return z;
     }
 
-    public void setZ(Double z) {
+    public void setZ(Float z) {
         this.z = z;
     }
 }
