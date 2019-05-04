@@ -2,27 +2,27 @@ package com.workgroup.figureplayground.figure;
 
 public class Point {
 
-    private Double x;
-    private Double y;
+    private Float x;
+    private Float y;
 
-    public Point(Double x, Double y) {
+    public Point(Float x, Float y) {
         this.x = x;
         this.y = y;
     }
 
-    public Double getX() {
+    public Float getX() {
         return x;
     }
 
-    public void setX(Double x) {
+    public void setX(Float x) {
         this.x = x;
     }
 
-    public Double getY() {
+    public Float getY() {
         return y;
     }
 
-    public void setY(Double y) {
+    public void setY(Float y) {
         this.y = y;
     }
 }

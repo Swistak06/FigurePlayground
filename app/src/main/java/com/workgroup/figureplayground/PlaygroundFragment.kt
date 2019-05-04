@@ -2,15 +2,21 @@ package com.workgroup.figureplayground
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import com.workgroup.figureplayground.figure.CameraMode
+import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.d2.Triangle
 import kotlinx.android.synthetic.main.fragment_playground.*
 import kotlinx.android.synthetic.main.fragment_playground.view.*
+import java.util.*
 
 class PlaygroundFragment : Fragment() {
 
     private var moveEnabled = true
     private var rotateEnabled = false
+    private var figure : Figure? = null
 
     private var listener: PlaygroundFrListener? = null
 
@@ -22,12 +28,15 @@ class PlaygroundFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view = inflater.inflate(R.layout.fragment_playground, container, false)
         setBottomBarOnClickListeners(view)
+        view.playgroundFrame.addView(figure)
         return view
     }
 
     override fun onAttach(context: Context) {
+
         super.onAttach(context)
         if (context is PlaygroundFrListener) {
             listener = context
@@ -42,6 +51,7 @@ class PlaygroundFragment : Fragment() {
     }
 
     private fun setBottomBarOnClickListeners(view: View){
+
         view.backBtn.setOnClickListener {
             listener?.backToMenuClick()
         }
@@ -50,21 +60,27 @@ class PlaygroundFragment : Fragment() {
             moveEnabled = false
             rotateBtn.setImageResource(IC_ROTATE_ENABLED)
             moveBtn.setImageResource(IC_MOVE_DISABLED)
+            figure!!.cameraMode = CameraMode.ROTATE
         }
         view.moveBtn.setOnClickListener {
             rotateEnabled = false
             moveEnabled = true
             rotateBtn.setImageResource(IC_ROTATE_DISABLED)
             moveBtn.setImageResource(IC_MOVE_ENABLED)
+            figure!!.cameraMode = CameraMode.MOVE
         }
 
     }
 
+    fun setFigure(figure: Figure) {
+        this.figure = figure
+    }
+
     companion object {
-        val IC_MOVE_ENABLED = R.drawable.move_black_24
-        val IC_MOVE_DISABLED = R.drawable.move_white_24
-        val IC_ROTATE_ENABLED = R.drawable.rotate_black_24
-        val IC_ROTATE_DISABLED = R.drawable.rotate_white_24
+        const val IC_MOVE_ENABLED = R.drawable.move_black_24
+        const val IC_MOVE_DISABLED = R.drawable.move_white_24
+        const val IC_ROTATE_ENABLED = R.drawable.rotate_black_24
+        const val IC_ROTATE_DISABLED = R.drawable.rotate_white_24
     }
 
     interface PlaygroundFrListener {
