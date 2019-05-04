@@ -10,6 +10,12 @@ open class Figure(context: Context) : View(context) {
     protected var lines: List<Line> = ArrayList()
 
     var cameraMode: CameraMode = CameraMode.MOVE
+    protected var figureMiddlePoint: Point? = null
+
+    open fun findFigureMiddlePoint(){}
+    fun deleteFigureMiddlePoint(){
+        figureMiddlePoint = null
+    }
 
 
 }

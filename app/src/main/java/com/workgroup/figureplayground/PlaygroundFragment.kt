@@ -61,6 +61,7 @@ class PlaygroundFragment : Fragment() {
             rotateBtn.setImageResource(IC_ROTATE_ENABLED)
             moveBtn.setImageResource(IC_MOVE_DISABLED)
             figure!!.cameraMode = CameraMode.ROTATE
+            figure!!.findFigureMiddlePoint()
         }
         view.moveBtn.setOnClickListener {
             rotateEnabled = false
@@ -68,6 +69,7 @@ class PlaygroundFragment : Fragment() {
             rotateBtn.setImageResource(IC_ROTATE_DISABLED)
             moveBtn.setImageResource(IC_MOVE_ENABLED)
             figure!!.cameraMode = CameraMode.MOVE
+            figure!!.deleteFigureMiddlePoint()
         }
 
     }

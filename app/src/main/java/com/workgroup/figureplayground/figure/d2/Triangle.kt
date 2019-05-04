@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure
@@ -28,7 +29,6 @@ class Triangle(context: Context) : Figure(context) {
     var distance = 0f
     var diff = 0L
 
-
     //For thread in onTouchEvent
     private var currentThreadEventX = 0f
     private var currentThreadEventY = 0f
@@ -38,17 +38,22 @@ class Triangle(context: Context) : Figure(context) {
     private var startCameraEventPoints = ArrayList<Point>()
 
     init {
-        paint.setARGB(255, 255, 0, 0)
         paint.style = Paint.Style.FILL_AND_STROKE
         paint.strokeWidth = 5f
     }
 
     override fun onDraw(canvas: Canvas) {
+        if(figureMiddlePoint != null) {
+            paint.setARGB(255, 0, 0, 255)
+            canvas.drawCircle(figureMiddlePoint!!.x, figureMiddlePoint!!.y, CIRCLE_RADIUS / 3, paint)
+        }
 
+        paint.setARGB(255, 255, 0, 0)
         canvas.drawCircle(points[0].x, points[0].y, CIRCLE_RADIUS, paint)
         canvas.drawCircle(points[1].x, points[1].y, CIRCLE_RADIUS, paint)
         canvas.drawCircle(points[2].x, points[2].y, CIRCLE_RADIUS, paint)
 
+        paint.setARGB(255, 0, 0, 0)
         canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint)
         canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint)
         canvas.drawLine(points[2].x, points[2].y, points[0].x, points[0].y, paint)
@@ -85,8 +90,9 @@ class Triangle(context: Context) : Figure(context) {
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && cameraEventEnabled){
             if(cameraMode == CameraMode.MOVE)
                 moveAllPoints(startCameraEventTouchPoint, eventPoint)
-            else if(cameraMode == CameraMode.ROTATE)
+            else if(cameraMode == CameraMode.ROTATE) {
                 rotateAllPoints(startCameraEventTouchPoint, eventPoint)
+            }
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
@@ -95,15 +101,27 @@ class Triangle(context: Context) : Figure(context) {
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
             resetTouchEventActions()
+            if(cameraMode == CameraMode.ROTATE)
+                findFigureMiddlePoint()
         }
         return true
     }
 
     private fun rotateAllPoints(startEventPoint: Point, eventPoint: Point) {
         //TODO implement rotation of all points
-        //find the middle of the figure
         //calculate the angle change of vertical event movement
         //...
+        val angle = findAngle(startEventPoint, figureMiddlePoint, eventPoint)
+    }
+
+    private fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
+        val functionA = Point((startEventPoint.y - figureMiddlePoint!!.y) / (startEventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(startEventPoint.y - figureMiddlePoint.y) / (startEventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
+        val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
+
+        return Math.atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
+
     }
 
     private fun moveAllPoints(startMovementPoint: Point, eventPoint: Point) {
@@ -176,6 +194,22 @@ class Triangle(context: Context) : Figure(context) {
         points = arrayListOf(Point(0.5f*width, 0.25f*height),
             Point(0.25f*width, 0.75f*height),
             Point(0.75f*width, 0.75f*height))
+    }
+    override fun findFigureMiddlePoint(){
+        //find 2 points in the middle of 2 different lines
+        val dPoint = Point((points[0].x + points[2].x)/2, (points[0].y + points[2].y)/2)
+        val ePoint = Point((points[0].x + points[1].x)/2, (points[0].y + points[1].y)/2)
+
+        //find function coefficients using above points and opposed points, x is a and y is b
+        val functionA = Point((dPoint.y - points[1].y) / (dPoint.x - points[1].x),
+            -points[1].x *(dPoint.y - points[1].y) / (dPoint.x - points[1].x) + points[1].y)
+        val functionB = Point((ePoint.y - points[2].y) / (ePoint.x - points[2].x),
+            -points[2].x *(ePoint.y - points[2].y) / (ePoint.x - points[2].x) + points[2].y)
+
+        //find the middle point
+        figureMiddlePoint = Point((functionB.y - functionA.y) / (functionA.x - functionB.x),
+            functionA.x * (functionB.y - functionA.y) / (functionA.x - functionB.x) + functionA.y)
+        this.invalidate()
     }
 
     companion object {
