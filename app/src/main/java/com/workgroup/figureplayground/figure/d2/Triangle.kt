@@ -5,37 +5,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
 import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure
 import com.workgroup.figureplayground.figure.Point
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class Triangle(context: Context) : Figure(context) {
-
-    private val paint = Paint()
-
-    var isScreenTouched = false
-    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    var singlePointMovementEnabled = false
-    var cameraEventEnabled = false
-    var pointTouched = 0
-    var timer = 0L
-    var distance = 0f
-    var diff = 0L
-
-    //For thread in onTouchEvent
-    private var currentThreadEventX = 0f
-    private var currentThreadEventY = 0f
-    private var currentThreadEventAction = 0
-
-    private var startCameraEventTouchPoint: Point = Point(0f,0f)
-    private var startCameraEventPoints = ArrayList<Point>()
 
     init {
         paint.style = Paint.Style.FILL_AND_STROKE
@@ -73,7 +50,7 @@ class Triangle(context: Context) : Figure(context) {
 
             isScreenTouched = true
             if(minVal < 1.2 * CIRCLE_RADIUS){
-                distance = minVal
+                distanceFromTouchedPoint = minVal
                 timer  = System.currentTimeMillis()
                 pointTouched = distances.indexOf(minVal)
                 createPointLongPressEventThread()
@@ -150,17 +127,17 @@ class Triangle(context: Context) : Figure(context) {
     private fun createPointLongPressEventThread(){
         thread(start = true) {
             var condition = true
-            while(diff < SECOND){
+            while(timeDifference < SECOND){
 
-                diff = System.currentTimeMillis() - timer
-                distance = countDistance(points[pointTouched].x, points[pointTouched].y, currentThreadEventX, currentThreadEventY)
+                timeDifference = System.currentTimeMillis() - timer
+                distanceFromTouchedPoint = countDistance(points[pointTouched].x, points[pointTouched].y, currentThreadEventX, currentThreadEventY)
 
-                if(distance > 1.2 * CIRCLE_RADIUS || currentThreadEventAction == android.view.MotionEvent.ACTION_UP){
+                if(distanceFromTouchedPoint > 1.2 * CIRCLE_RADIUS || currentThreadEventAction == android.view.MotionEvent.ACTION_UP){
                     condition = false
                     break
                 }
             }
-            diff = 0
+            timeDifference = 0
             if(condition){
                 if (Build.VERSION.SDK_INT >= 26) {
                     vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -172,25 +149,12 @@ class Triangle(context: Context) : Figure(context) {
         }
     }
 
-    private fun calculateDistancesFromPoint(point: Point): List<Float>{
-        val distances = ArrayList<Float>()
-
-        points.forEach {
-            distances.add(countDistance(it.x, it.y, point.x , point.y))
-        }
-        return distances
-    }
-
-    private fun countDistance(pointXA : Float, pointYA : Float, pointXB : Float, pointYB : Float): Float{
-        return sqrt((pointXA - pointXB).pow(2) + (pointYA- pointYB).pow(2))
-    }
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         generatePoints()
     }
 
-    private fun generatePoints(){
+    override fun generatePoints(){
         points = arrayListOf(Point(0.5f*width, 0.25f*height),
             Point(0.25f*width, 0.75f*height),
             Point(0.75f*width, 0.75f*height))
@@ -212,8 +176,5 @@ class Triangle(context: Context) : Figure(context) {
         this.invalidate()
     }
 
-    companion object {
-        const val CIRCLE_RADIUS: Float = 30.0f
-        const val SECOND: Int = 1000
-    }
+
 }
