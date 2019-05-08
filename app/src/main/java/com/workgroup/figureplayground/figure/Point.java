@@ -1,5 +1,7 @@
 package com.workgroup.figureplayground.figure;
 
+import androidx.annotation.NonNull;
+
 public class Point {
 
     private Float x;
@@ -24,5 +26,11 @@ public class Point {
 
     public void setY(Float y) {
         this.y = y;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "x: " + x + " | " + "y: " + y;
     }
 }

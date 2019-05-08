@@ -4,13 +4,17 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.os.Debug
 import android.os.VibrationEffect
+import android.util.Log
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure
 import com.workgroup.figureplayground.figure.Point
+import java.lang.Math.pow
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
+import kotlin.math.*
 
 class Triangle(context: Context) : Figure(context) {
 
@@ -59,8 +63,8 @@ class Triangle(context: Context) : Figure(context) {
                 cameraEventEnabled = true
                 startCameraEventTouchPoint = Point(event.x, event.y)
                 startCameraEventPoints = ArrayList()
-                points.forEach {
-                    startCameraEventPoints.add(Point(it.x, it.y))
+                for(i in 0 until points.size){
+                    startCameraEventPoints.add(Point(points[i].x, points[i].y))
                 }
             }
         }
@@ -69,6 +73,7 @@ class Triangle(context: Context) : Figure(context) {
                 moveAllPoints(startCameraEventTouchPoint, eventPoint)
             else if(cameraMode == CameraMode.ROTATE) {
                 rotateAllPoints(startCameraEventTouchPoint, eventPoint)
+
             }
             this.invalidate()
         }
@@ -78,17 +83,25 @@ class Triangle(context: Context) : Figure(context) {
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
             resetTouchEventActions()
-            if(cameraMode == CameraMode.ROTATE)
+            if(cameraMode == CameraMode.ROTATE) {
                 findFigureMiddlePoint()
+            }
         }
         return true
     }
 
     private fun rotateAllPoints(startEventPoint: Point, eventPoint: Point) {
         //TODO implement rotation of all points
-        //calculate the angle change of vertical event movement
-        //...
-        val angle = findAngle(startEventPoint, figureMiddlePoint, eventPoint)
+
+        var angle = findAngle(startEventPoint, figureMiddlePoint, eventPoint)
+        for(i in 0 until points.size){
+
+            val x = (startCameraEventPoints[i].x - figureMiddlePoint!!.x).toDouble()
+            val y = (startCameraEventPoints[i].y - figureMiddlePoint!!.y).toDouble()
+
+            points[i].x = ((x * cos(-2 * angle)) - (y * sin(-2 * angle))).toFloat() + figureMiddlePoint!!.x
+            points[i].y = ((x * sin(-2 * angle)) + (y * cos(-2 * angle))).toFloat() + figureMiddlePoint!!.y
+        }
     }
 
     private fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
@@ -97,8 +110,7 @@ class Triangle(context: Context) : Figure(context) {
         val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
             -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
 
-        return Math.atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
-
+        return atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
     }
 
     private fun moveAllPoints(startMovementPoint: Point, eventPoint: Point) {
