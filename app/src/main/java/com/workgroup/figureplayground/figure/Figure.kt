@@ -21,8 +21,7 @@ open class Figure(context: Context) : View(context) {
 
 
     //X and Y of current touch
-    protected var currentThreadEventX = 0f
-    protected var currentThreadEventY = 0f
+    protected var currentThreadEvent = Point(0f,0f)
     //Current touch type(move,up,dow etc)
     protected var currentThreadEventAction = 0
     //For thread calculations
@@ -65,12 +64,12 @@ open class Figure(context: Context) : View(context) {
         val distances = ArrayList<Float>()
 
         points.forEach {
-            distances.add(countDistance(it.x, it.y, point.x , point.y))
+            distances.add(countDistance(it, point))
         }
         return distances
     }
-    protected fun countDistance(pointXA : Float, pointYA : Float, pointXB : Float, pointYB : Float): Float{
-        return sqrt((pointXA - pointXB).pow(2) + (pointYA- pointYB).pow(2))
+    protected fun countDistance(pointA :Point, pointB :Point): Float{
+        return sqrt((pointA.x - pointB.x).pow(2) + (pointA.y - pointB.y).pow(2))
     }
 
 

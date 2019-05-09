@@ -41,8 +41,8 @@ class Triangle(context: Context) : Figure(context) {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        currentThreadEventX = event!!.x
-        currentThreadEventY = event.y
+        currentThreadEvent.x = event!!.x
+        currentThreadEvent.y = event.y
         currentThreadEventAction = event.action
 
         val eventPoint = Point(event.x, event.y)
@@ -142,7 +142,7 @@ class Triangle(context: Context) : Figure(context) {
             while(timeDifference < SECOND){
 
                 timeDifference = System.currentTimeMillis() - timer
-                distanceFromTouchedPoint = countDistance(points[pointTouched].x, points[pointTouched].y, currentThreadEventX, currentThreadEventY)
+                distanceFromTouchedPoint = countDistance(points[pointTouched], currentThreadEvent)
 
                 if(distanceFromTouchedPoint > 1.2 * CIRCLE_RADIUS || currentThreadEventAction == android.view.MotionEvent.ACTION_UP){
                     condition = false

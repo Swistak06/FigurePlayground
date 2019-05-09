@@ -13,9 +13,7 @@ import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.min
 
-class Square(context: Context) : Figure(context){
-
-    var lineSize = 250f
+class Quadrangle(context: Context) : Figure(context){
 
     override fun onDraw(canvas: Canvas) {
         if(figureMiddlePoint != null) {
@@ -31,12 +29,12 @@ class Square(context: Context) : Figure(context){
     }
 
     override fun generatePoints(){
-        lineSize = 0.25f*width
+
         points = arrayListOf(
-            Point(0.25f*width, (0.5f*height)-lineSize),
-            Point(0.75f*width, (0.5f*height)-lineSize),
-            Point(0.75f*width, (0.5f*height)+lineSize),
-            Point(0.25f*width, (0.5f*height)+lineSize)
+            Point(0.35f*width, 0.4f*height),
+            Point(0.65f*width, 0.4f*height),
+            Point(0.75f*width, 0.6f*height),
+            Point(0.25f*width, 0.6f*height)
         )
     }
 
@@ -60,12 +58,6 @@ class Square(context: Context) : Figure(context){
     }
 
 
-    override fun findFigureMiddlePoint(){
-        val midXLine = abs(points[0].x - points[2].x)/2
-        val midYLine = abs(points[0].y - points[2].y)/2
-        figureMiddlePoint = Point(min(points[0].x ,points[2].x)+midXLine,min(points[0].y ,points[2].y)+midYLine)
-        this.invalidate()
-    }
 
     private fun createPointLongPressEventThread(){
         thread(start = true) {
@@ -180,5 +172,20 @@ class Square(context: Context) : Figure(context){
         }
         return true
     }
+    override fun findFigureMiddlePoint(){
+        //find 2 points in the middle of 2 different lines
+        val dPoint = Point((points[0].x + points[2].x)/2, (points[0].y + points[2].y)/2)
+        val ePoint = Point((points[0].x + points[1].x)/2, (points[0].y + points[1].y)/2)
 
+        //find function coefficients using above points and opposed points, x is a and y is b
+        val functionA = Point((dPoint.y - points[1].y) / (dPoint.x - points[1].x),
+            -points[1].x *(dPoint.y - points[1].y) / (dPoint.x - points[1].x) + points[1].y)
+        val functionB = Point((ePoint.y - points[2].y) / (ePoint.x - points[2].x),
+            -points[2].x *(ePoint.y - points[2].y) / (ePoint.x - points[2].x) + points[2].y)
+
+        //find the middle point
+        figureMiddlePoint = Point((functionB.y - functionA.y) / (functionA.x - functionB.x),
+            functionA.x * (functionB.y - functionA.y) / (functionA.x - functionB.x) + functionA.y)
+        this.invalidate()
+    }
 }

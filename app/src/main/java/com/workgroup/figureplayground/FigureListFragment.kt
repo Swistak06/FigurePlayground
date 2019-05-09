@@ -25,7 +25,7 @@ class FigureListFragment : Fragment() {
 
         if(mMode == 0){
             itemList = arrayOf(FigureListItem(R.drawable.triangle, "Triangle"),FigureListItem(R.drawable.square, "Square")
-                ,FigureListItem(R.drawable.rectangle, "Rectangle"),FigureListItem(R.drawable.diamond, "Diamond"),FigureListItem(R.drawable.circle, "Circle"))
+                ,FigureListItem(R.drawable.rectangle, "Rectangle"),FigureListItem(R.drawable.diamond, "Quadrangle"),FigureListItem(R.drawable.circle, "Circle"))
         }
         else{
             itemList = arrayOf(FigureListItem(R.drawable.flat_fig, "Cube"),FigureListItem(R.drawable.flat_fig, "Sphere")
