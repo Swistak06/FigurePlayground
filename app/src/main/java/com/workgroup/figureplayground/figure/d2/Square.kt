@@ -9,13 +9,14 @@ import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure
 import com.workgroup.figureplayground.figure.Point
+import java.lang.Math.pow
 import kotlin.concurrent.thread
-import kotlin.math.abs
-import kotlin.math.min
+import kotlin.math.*
 
 class Square(context: Context) : Figure(context){
 
     var lineSize = 250f
+    var angle : Double = 0.0
 
     override fun onDraw(canvas: Canvas) {
         if(figureMiddlePoint != null) {
@@ -30,41 +31,112 @@ class Square(context: Context) : Figure(context){
         paint.strokeWidth = 5f
     }
 
-    override fun generatePoints(){
-        lineSize = 0.25f*width
-        points = arrayListOf(
-            Point(0.25f*width, (0.5f*height)-lineSize),
-            Point(0.75f*width, (0.5f*height)-lineSize),
-            Point(0.75f*width, (0.5f*height)+lineSize),
-            Point(0.25f*width, (0.5f*height)+lineSize)
-        )
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        currentThreadEventX = event!!.x
+        currentThreadEventY = event.y
+        currentThreadEventAction = event.action
+
+        val eventPoint = Point(event.x, event.y)
+
+        //If touched without holding
+        if(event.action == android.view.MotionEvent.ACTION_DOWN && !isScreenTouched){
+
+            val distances = calculateDistancesFromPoint(eventPoint)
+            val minVal = distances.min()!!
+
+            startCameraEventPoints = ArrayList()
+            for(i in 0 until points.size){
+                startCameraEventPoints.add(Point(points[i].x, points[i].y))
+            }
+
+            isScreenTouched = true
+            if(minVal < 1.2 * CIRCLE_RADIUS){
+                distanceFromTouchedPoint = minVal
+                timer  = System.currentTimeMillis()
+                pointTouched = distances.indexOf(minVal)
+                createPointLongPressEventThread()
+                findFigureMiddlePoint()
+                startCameraEventTouchPoint = points[pointTouched]
+                angle = findAngle(points[0], figureMiddlePoint!!, Point(0.25f*width, (0.5f*height)-lineSize))
+            }
+            else{
+                cameraEventEnabled = true
+                startCameraEventTouchPoint = eventPoint
+            }
+        }
+        else if(event.action == android.view.MotionEvent.ACTION_MOVE && cameraEventEnabled){
+            if(cameraMode == CameraMode.MOVE)
+                moveAllPoints(startCameraEventTouchPoint, eventPoint)
+            else if(cameraMode == CameraMode.ROTATE) {
+                rotateAllPoints(findAngle(startCameraEventTouchPoint, figureMiddlePoint, eventPoint))
+            }
+            this.invalidate()
+        }
+        else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
+            resizeSquare(eventPoint)
+            this.invalidate()
+        }
+        else if(event.action == android.view.MotionEvent.ACTION_UP){
+            resetTouchEventActions()
+            if(cameraMode == CameraMode.ROTATE) {
+                findFigureMiddlePoint()
+            }
+        }
+        return true
     }
 
-    override fun drawInitialFigure(canvas : Canvas) {
-        paint.setARGB(255, 255, 0, 0)
-        canvas.drawCircle(points[0].x, points[0].y, CIRCLE_RADIUS, paint)
-        canvas.drawCircle(points[1].x, points[1].y, CIRCLE_RADIUS, paint)
-        canvas.drawCircle(points[2].x, points[2].y, CIRCLE_RADIUS, paint)
-        canvas.drawCircle(points[3].x, points[3].y, CIRCLE_RADIUS, paint)
+    private fun rotateAllPoints(angle : Double) {
 
-        paint.setARGB(255, 0, 0, 0)
-        canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint)
-        canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint)
-        canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint)
-        canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint)
+        for(i in 0 until points.size){
+            val x = (startCameraEventPoints[i].x - figureMiddlePoint!!.x).toDouble()
+            val y = (startCameraEventPoints[i].y - figureMiddlePoint!!.y).toDouble()
+
+            points[i].x = ((x * cos(-2 * angle)) - (y * sin(-2 * angle))).toFloat() + figureMiddlePoint!!.x
+            points[i].y = ((x * sin(-2 * angle)) + (y * cos(-2 * angle))).toFloat() + figureMiddlePoint!!.y
+        }
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        generatePoints()
+    private fun resizeSquare(eventPoint: Point) {
+
+        val diffVector = Point(abs(eventPoint.x - figureMiddlePoint!!.x), abs(eventPoint.y - figureMiddlePoint!!.y))
+        val diffVectorLenght = sqrt(pow(diffVector.x.toDouble(), 2.0) + pow(diffVector.y.toDouble(), 2.0))
+        val diffFromMiddle = diffVectorLenght / sqrt(2.0)
+
+        //left up
+        points[0].x = figureMiddlePoint!!.x - diffFromMiddle.toFloat()
+        points[0].y = figureMiddlePoint!!.y + diffFromMiddle.toFloat()
+        //right up
+        points[1].x = figureMiddlePoint!!.x + diffFromMiddle.toFloat()
+        points[1].y = figureMiddlePoint!!.y + diffFromMiddle.toFloat()
+        //right down
+        points[2].x = figureMiddlePoint!!.x + diffFromMiddle.toFloat()
+        points[2].y = figureMiddlePoint!!.y - diffFromMiddle.toFloat()
+        //left down
+        points[3].x = figureMiddlePoint!!.x - diffFromMiddle.toFloat()
+        points[3].y = figureMiddlePoint!!.y - diffFromMiddle.toFloat()
+
+        resizeSquareRotate(angle)
     }
 
+    private fun resizeSquareRotate(angle : Double) {
 
-    override fun findFigureMiddlePoint(){
-        val midXLine = abs(points[0].x - points[2].x)/2
-        val midYLine = abs(points[0].y - points[2].y)/2
-        figureMiddlePoint = Point(min(points[0].x ,points[2].x)+midXLine,min(points[0].y ,points[2].y)+midYLine)
-        this.invalidate()
+        for(i in 0 until points.size){
+            val x = (points[i].x - figureMiddlePoint!!.x).toDouble()
+            val y = (points[i].y - figureMiddlePoint!!.y).toDouble()
+
+            points[i].x = ((x * cos(angle)) - (y * sin(angle))).toFloat() + figureMiddlePoint!!.x
+            points[i].y = ((x * sin(angle)) + (y * cos(angle))).toFloat() + figureMiddlePoint!!.y
+        }
+    }
+
+    private fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
+        val functionA = Point((startEventPoint.y - figureMiddlePoint!!.y) / (startEventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(startEventPoint.y - figureMiddlePoint.y) / (startEventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
+        val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
+
+        return atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
+
     }
 
     private fun createPointLongPressEventThread(){
@@ -103,26 +175,6 @@ class Square(context: Context) : Figure(context){
         }
     }
 
-    private fun rotateAllPoints(startEventPoint: Point, eventPoint: Point) {
-        //TODO implement rotation of all points
-        //calculate the angle change of vertical event movement
-        //...
-        val angle = findAngle(startEventPoint, figureMiddlePoint, eventPoint)
-    }
-    private fun moveSinglePoint(pointToMove: Point, eventPoint: Point) {
-        //Resize whole figure
-        pointToMove.x = eventPoint.x
-        pointToMove.y = eventPoint.y
-    }
-    private fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
-        val functionA = Point((startEventPoint.y - figureMiddlePoint!!.y) / (startEventPoint.x - figureMiddlePoint.x),
-            -figureMiddlePoint.x *(startEventPoint.y - figureMiddlePoint.y) / (startEventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
-        val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
-            -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
-
-        return Math.atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
-
-    }
     private fun resetTouchEventActions(){
         pointTouched = -1
         isScreenTouched = false
@@ -130,55 +182,39 @@ class Square(context: Context) : Figure(context){
         cameraEventEnabled = false
         timer = 0
     }
-
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        currentThreadEvent.x = event!!.x
-        currentThreadEvent.y = event.y
-        currentThreadEventAction = event.action
-
-        val eventPoint = Point(event.x, event.y)
-
-        //If touched without holding
-        if(event.action == android.view.MotionEvent.ACTION_DOWN && !isScreenTouched){
-
-            val distances = calculateDistancesFromPoint(eventPoint)
-            val minVal = distances.min()!!
-
-            isScreenTouched = true
-            if(minVal < 1.2 * CIRCLE_RADIUS){
-                distanceFromTouchedPoint = minVal
-                timer  = System.currentTimeMillis()
-                pointTouched = distances.indexOf(minVal)
-                createPointLongPressEventThread()
-            }
-            else{
-                cameraEventEnabled = true
-                startCameraEventTouchPoint = Point(event.x, event.y)
-                startCameraEventPoints = ArrayList()
-                points.forEach {
-                    startCameraEventPoints.add(Point(it.x, it.y))
-                }
-            }
-        }
-        else if(event.action == android.view.MotionEvent.ACTION_MOVE && cameraEventEnabled){
-            if(cameraMode == CameraMode.MOVE)
-                moveAllPoints(startCameraEventTouchPoint, eventPoint)
-            else if(cameraMode == CameraMode.ROTATE) {
-                rotateAllPoints(startCameraEventTouchPoint, eventPoint)
-            }
-            this.invalidate()
-        }
-        else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
-            moveSinglePoint(points[pointTouched], eventPoint)
-            this.invalidate()
-        }
-        else if(event.action == android.view.MotionEvent.ACTION_UP){
-            resetTouchEventActions()
-            if(cameraMode == CameraMode.ROTATE)
-                findFigureMiddlePoint()
-        }
-        return true
+    override fun generatePoints(){
+        lineSize = 0.25f*width
+        points = arrayListOf(
+            Point(0.25f*width, (0.5f*height)-lineSize),
+            Point(0.75f*width, (0.5f*height)-lineSize),
+            Point(0.75f*width, (0.5f*height)+lineSize),
+            Point(0.25f*width, (0.5f*height)+lineSize)
+        )
     }
 
+    override fun drawInitialFigure(canvas : Canvas) {
+        paint.setARGB(255, 255, 0, 0)
+        canvas.drawCircle(points[0].x, points[0].y, CIRCLE_RADIUS, paint)
+        canvas.drawCircle(points[1].x, points[1].y, CIRCLE_RADIUS, paint)
+        canvas.drawCircle(points[2].x, points[2].y, CIRCLE_RADIUS, paint)
+        canvas.drawCircle(points[3].x, points[3].y, CIRCLE_RADIUS, paint)
+
+        paint.setARGB(255, 0, 0, 0)
+        canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint)
+        canvas.drawLine(points[1].x, points[1].y, points[2].x, points[2].y, paint)
+        canvas.drawLine(points[2].x, points[2].y, points[3].x, points[3].y, paint)
+        canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        generatePoints()
+    }
+
+    override fun findFigureMiddlePoint(){
+        val midXLine = abs(points[0].x - points[2].x)/2
+        val midYLine = abs(points[0].y - points[2].y)/2
+        figureMiddlePoint = Point(min(points[0].x ,points[2].x)+midXLine,min(points[0].y ,points[2].y)+midYLine)
+        this.invalidate()
+    }
 }
