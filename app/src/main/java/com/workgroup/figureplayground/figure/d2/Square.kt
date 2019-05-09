@@ -32,8 +32,8 @@ class Square(context: Context) : Figure(context){
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        currentThreadEventX = event!!.x
-        currentThreadEventY = event.y
+        currentThreadEvent.x = event!!.x
+        currentThreadEvent.y = event.y
         currentThreadEventAction = event.action
 
         val eventPoint = Point(event.x, event.y)
