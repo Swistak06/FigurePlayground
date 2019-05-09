@@ -145,7 +145,7 @@ class Square(context: Context) : Figure(context){
             while(timeDifference < SECOND){
 
                 timeDifference = System.currentTimeMillis() - timer
-                distanceFromTouchedPoint = countDistance(points[pointTouched].x, points[pointTouched].y, currentThreadEventX, currentThreadEventY)
+                distanceFromTouchedPoint = countDistance(points[pointTouched], currentThreadEvent)
 
                 if(distanceFromTouchedPoint > 1.2 * CIRCLE_RADIUS || currentThreadEventAction == MotionEvent.ACTION_UP){
                     condition = false
@@ -217,8 +217,4 @@ class Square(context: Context) : Figure(context){
         figureMiddlePoint = Point(min(points[0].x ,points[2].x)+midXLine,min(points[0].y ,points[2].y)+midYLine)
         this.invalidate()
     }
-
-
-
-
 }

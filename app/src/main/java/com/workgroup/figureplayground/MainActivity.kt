@@ -6,7 +6,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.workgroup.figureplayground.figure.Figure
 import com.workgroup.figureplayground.figure.d2.*
-import kotlinx.android.synthetic.main.fragment_playground.*
 
 class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, PlaygroundFragment.PlaygroundFrListener,
     FigureListFragment.FigureListFrListener {
@@ -69,7 +68,7 @@ class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, Pl
             return when(position){
                 1 -> Square(this)
                 2 -> Rectangle(this)
-                3 -> Diamond(this)
+                3 -> Quadrangle(this)
                 4 -> Circle(this)
                 else -> Triangle(this)
             }
