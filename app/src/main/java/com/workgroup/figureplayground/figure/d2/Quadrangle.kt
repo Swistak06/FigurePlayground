@@ -52,13 +52,6 @@ class Quadrangle(context: Context) : Figure(context){
         canvas.drawLine(points[3].x, points[3].y, points[0].x, points[0].y, paint)
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        generatePoints()
-    }
-
-
-
     private fun createPointLongPressEventThread(){
         thread(start = true) {
             var condition = true
@@ -106,15 +99,7 @@ class Quadrangle(context: Context) : Figure(context){
         pointToMove.x = eventPoint.x
         pointToMove.y = eventPoint.y
     }
-    private fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
-        val functionA = Point((startEventPoint.y - figureMiddlePoint!!.y) / (startEventPoint.x - figureMiddlePoint.x),
-            -figureMiddlePoint.x *(startEventPoint.y - figureMiddlePoint.y) / (startEventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
-        val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
-            -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
 
-        return Math.atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
-
-    }
     private fun resetTouchEventActions(){
         pointTouched = -1
         isScreenTouched = false

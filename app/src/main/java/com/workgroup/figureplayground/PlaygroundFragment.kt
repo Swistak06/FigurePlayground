@@ -20,10 +20,6 @@ class PlaygroundFragment : Fragment() {
 
     private var listener: PlaygroundFrListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,7 +65,7 @@ class PlaygroundFragment : Fragment() {
             rotateBtn.setImageResource(IC_ROTATE_DISABLED)
             moveBtn.setImageResource(IC_MOVE_ENABLED)
             figure!!.cameraMode = CameraMode.MOVE
-            figure!!.deleteFigureMiddlePoint()
+            figure!!.findFigureMiddlePoint()
         }
 
     }

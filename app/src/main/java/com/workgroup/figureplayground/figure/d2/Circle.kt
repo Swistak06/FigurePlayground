@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 
 class Circle(context: Context) : Figure(context){
 
-    var radius = 200f
+    private var radius = 200f
 
     init {
         paint.strokeWidth = 5f
@@ -61,8 +61,10 @@ class Circle(context: Context) : Figure(context){
             }
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && cameraEventEnabled){
-            if(cameraMode == CameraMode.MOVE)
+            if(cameraMode == CameraMode.MOVE) {
                 moveAllPoints(startCameraEventTouchPoint, eventPoint)
+                findFigureMiddlePoint()
+            }
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
@@ -71,33 +73,9 @@ class Circle(context: Context) : Figure(context){
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
             resetTouchEventActions()
-            if(cameraMode == CameraMode.ROTATE) {
-                findFigureMiddlePoint()
-            }
+            findFigureMiddlePoint()
         }
         return true
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        generatePoints()
-    }
-
-    override fun generatePoints(){
-        points = arrayListOf(
-            Point(0.5f*width, 0.5f*height)
-        )
-    }
-
-    private fun moveAllPoints(startMovementPoint: Point, eventPoint: Point) {
-        val xDiff = eventPoint.x - startMovementPoint.x
-        val yDiff = eventPoint.y - startMovementPoint.y
-
-        points.forEach {
-            val index = points.indexOf(it)
-            it.x = startCameraEventPoints[index].x + xDiff
-            it.y = startCameraEventPoints[index].y + yDiff
-        }
     }
 
     private fun createPointLongPressEventThread(){
@@ -124,6 +102,21 @@ class Circle(context: Context) : Figure(context){
         }
     }
 
+    private fun moveAllPoints(startMovementPoint: Point, eventPoint: Point) {
+        val xDiff = eventPoint.x - startMovementPoint.x
+        val yDiff = eventPoint.y - startMovementPoint.y
+
+        points.forEach {
+            val index = points.indexOf(it)
+            it.x = startCameraEventPoints[index].x + xDiff
+            it.y = startCameraEventPoints[index].y + yDiff
+        }
+    }
+
+    private fun resizeCircle(){
+        radius = sqrt((currentThreadEvent.x - points[0].x).pow(2) +(currentThreadEvent.y - points[0].y).pow(2))
+    }
+
     private fun resetTouchEventActions(){
         pointTouched = -1
         isScreenTouched = false
@@ -132,8 +125,10 @@ class Circle(context: Context) : Figure(context){
         timer = 0
     }
 
-    private fun resizeCircle(){
-        radius = sqrt((currentThreadEvent.x - points[0].x).pow(2) +(currentThreadEvent.y - points[0].y).pow(2))
+    override fun generatePoints(){
+        points = arrayListOf(
+            Point(0.5f*width, 0.5f*height)
+        )
     }
 
     override fun findFigureMiddlePoint() {
