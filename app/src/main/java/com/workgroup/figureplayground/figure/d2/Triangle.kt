@@ -4,19 +4,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
-import android.os.Debug
 import android.os.VibrationEffect
-import android.util.Log
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
-import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
-import java.lang.Math.pow
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 import kotlin.math.*
 
-class Triangle(context: Context) : Figure(context) {
+class Triangle(context: Context) : Figure2D(context) {
 
     init {
         paint.style = Paint.Style.FILL_AND_STROKE
