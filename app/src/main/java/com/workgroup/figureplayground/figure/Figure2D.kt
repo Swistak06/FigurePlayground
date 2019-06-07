@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Vibrator
 import android.view.View
 import java.util.ArrayList
+import kotlin.math.atan
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -17,7 +18,6 @@ open class Figure2D(context: Context) : View(context), Figure {
     var timer = 0L
     protected val paint = Paint()
 
-
     //X and Y of current touch
     protected var currentThreadEvent = Point(0f,0f)
     //Current touch type(move,up,dow etc)
@@ -25,9 +25,6 @@ open class Figure2D(context: Context) : View(context), Figure {
     //For thread calculations
     protected var distanceFromTouchedPoint = 0f
     protected var timeDifference = 0L
-
-
-
 
     protected var startCameraEventTouchPoint: Point = Point(0f,0f)
     protected var startCameraEventPoints = ArrayList<Point>()
@@ -58,7 +55,7 @@ open class Figure2D(context: Context) : View(context), Figure {
         const val SECOND: Int = 1000
     }
 
-    protected fun calculateDistancesFromPoint(point: Point): List<Float>{
+    protected open fun calculateDistancesFromPoint(point: Point): List<Float>{
         val distances = ArrayList<Float>()
 
         points.forEach {
@@ -70,6 +67,17 @@ open class Figure2D(context: Context) : View(context), Figure {
         return sqrt((pointA.x - pointB.x).pow(2) + (pointA.y - pointB.y).pow(2))
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        generatePoints()
+        findFigureMiddlePoint()
+    }
+    protected fun findAngle(startEventPoint: Point, figureMiddlePoint: Point?, eventPoint: Point): Double {
+        val functionA = Point((startEventPoint.y - figureMiddlePoint!!.y) / (startEventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(startEventPoint.y - figureMiddlePoint.y) / (startEventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
+        val functionB = Point((eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x),
+            -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
 
-
+        return atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
+    }
 }

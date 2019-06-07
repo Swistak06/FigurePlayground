@@ -63,7 +63,7 @@ class PlaygroundFragment : Fragment() {
             rotateBtn.setImageResource(IC_ROTATE_DISABLED)
             moveBtn.setImageResource(IC_MOVE_ENABLED)
             figure2D!!.cameraMode = CameraMode.MOVE
-            figure2D!!.deleteFigureMiddlePoint()
+            figure2D!!.findFigureMiddlePoint()
         }
 
     }
