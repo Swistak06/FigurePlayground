@@ -9,6 +9,8 @@ import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Figure3D
 import com.workgroup.figureplayground.figure.d2.*
 import com.workgroup.figureplayground.figure.d3.Cube
+import com.workgroup.figureplayground.figure.d3.Cuboid
+import com.workgroup.figureplayground.figure.d3.Pyramid
 
 class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, PlaygroundFragment.PlaygroundFrListener,
     FigureListFragment.FigureListFrListener, Playground3DFragment.Playground3DFrListener {
@@ -87,11 +89,11 @@ class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, Pl
         else{
             return when(position){
                 //TODO create 3d figured and change this
-                1 -> Triangle(this)
-                2 -> Triangle(this)
-                3 -> Triangle(this)
-                4 -> Triangle(this)
-                else -> Cube(this)
+                1 -> Cube(this)
+                2 -> Pyramid(this) //
+                3 -> Cuboid(this) //Cuboid
+                4 -> Cube(this)
+                else -> Cube(this) //Cube
             }
         }
     }

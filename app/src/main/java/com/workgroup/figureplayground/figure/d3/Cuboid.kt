@@ -2,11 +2,10 @@ package com.workgroup.figureplayground.figure.d3
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.Log
-import android.view.MotionEvent
-import com.workgroup.figureplayground.figure.*
+import com.workgroup.figureplayground.figure.Figure3D
+import com.workgroup.figureplayground.figure.Vector
 
-class Cube(context: Context) : Figure3D(context){
+class Cuboid(context: Context) : Figure3D(context){
 
     init {
         paint.strokeWidth = 5f
@@ -38,24 +37,24 @@ class Cube(context: Context) : Figure3D(context){
     override fun generatePoints(){
         var lineSize = 0.25f*width
         startingPoints = arrayListOf(
-            Vector(0.25f*width, (0.5f*height)-lineSize, -lineSize),
-            Vector(0.25f*width, (0.5f*height)-lineSize, lineSize),
-            Vector(0.75f*width, (0.5f*height)-lineSize, -lineSize),
-            Vector(0.75f*width, (0.5f*height)-lineSize, lineSize),
-            Vector(0.75f*width, (0.5f*height)+lineSize, -lineSize),
-            Vector(0.75f*width, (0.5f*height)+lineSize, lineSize),
-            Vector(0.25f*width, (0.5f*height)+lineSize, -lineSize),
-            Vector(0.25f*width, (0.5f*height)+lineSize, lineSize)
+            Vector(0.125f*width, (0.5f*height)-lineSize, -lineSize),
+            Vector(0.125f*width, (0.5f*height)-lineSize, lineSize),
+            Vector(0.875f*width, (0.5f*height)-lineSize, -lineSize),
+            Vector(0.875f*width, (0.5f*height)-lineSize, lineSize),
+            Vector(0.875f*width, (0.5f*height)+lineSize, -lineSize),
+            Vector(0.875f*width, (0.5f*height)+lineSize, lineSize),
+            Vector(0.125f*width, (0.5f*height)+lineSize, -lineSize),
+            Vector(0.125f*width, (0.5f*height)+lineSize, lineSize)
         )
         points  = arrayListOf(
-            Vector(0.25f*width, (0.5f*height)-lineSize, -lineSize),
-            Vector(0.25f*width, (0.5f*height)-lineSize, lineSize),
-            Vector(0.75f*width, (0.5f*height)-lineSize, -lineSize),
-            Vector(0.75f*width, (0.5f*height)-lineSize, lineSize),
-            Vector(0.75f*width, (0.5f*height)+lineSize, -lineSize),
-            Vector(0.75f*width, (0.5f*height)+lineSize, lineSize),
-            Vector(0.25f*width, (0.5f*height)+lineSize, -lineSize),
-            Vector(0.25f*width, (0.5f*height)+lineSize, lineSize)
+            Vector(0.125f*width, (0.5f*height)-lineSize, -lineSize),
+            Vector(0.125f*width, (0.5f*height)-lineSize, lineSize),
+            Vector(0.875f*width, (0.5f*height)-lineSize, -lineSize),
+            Vector(0.875f*width, (0.5f*height)-lineSize, lineSize),
+            Vector(0.875f*width, (0.5f*height)+lineSize, -lineSize),
+            Vector(0.875f*width, (0.5f*height)+lineSize, lineSize),
+            Vector(0.125f*width, (0.5f*height)+lineSize, -lineSize),
+            Vector(0.125f*width, (0.5f*height)+lineSize, lineSize)
         )
     }
 }
