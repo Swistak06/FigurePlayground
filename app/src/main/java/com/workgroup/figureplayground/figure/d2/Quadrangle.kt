@@ -7,13 +7,11 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
-import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
 import kotlin.concurrent.thread
-import kotlin.math.abs
-import kotlin.math.min
 
-class Quadrangle(context: Context) : Figure(context){
+class Quadrangle(context: Context) : Figure2D(context){
 
     override fun onDraw(canvas: Canvas) {
         if(figureMiddlePoint != null) {

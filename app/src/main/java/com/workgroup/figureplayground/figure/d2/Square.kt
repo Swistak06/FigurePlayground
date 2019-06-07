@@ -7,13 +7,13 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
-import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
 import java.lang.Math.pow
 import kotlin.concurrent.thread
 import kotlin.math.*
 
-class Square(context: Context) : Figure(context){
+class Square(context: Context) : Figure2D(context){
 
     private var lineSize = 250f
     private var angle : Double = 0.0

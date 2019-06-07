@@ -8,7 +8,7 @@ import android.os.VibrationEffect
 import android.util.Log
 import android.view.MotionEvent
 import com.workgroup.figureplayground.figure.CameraMode
-import com.workgroup.figureplayground.figure.Figure
+import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
 import kotlin.concurrent.thread
 import kotlin.math.abs
@@ -16,7 +16,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-class Rectangle(context: Context) : Figure(context){
+class Rectangle(context: Context) : Figure2D(context){
 
     var angle : Double = 0.0
     var middlePoints: ArrayList<Point> = ArrayList()
