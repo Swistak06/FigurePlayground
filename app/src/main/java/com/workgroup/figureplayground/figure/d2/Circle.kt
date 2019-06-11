@@ -10,6 +10,7 @@ import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
 import kotlin.concurrent.thread
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -30,7 +31,6 @@ class Circle(context: Context) : Figure2D(context){
         paint.style = Paint.Style.STROKE
         paint.setARGB(255, 0, 0, 0)
         canvas.drawCircle(points[0].x, points[0].y,radius, paint)
-
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -115,6 +115,7 @@ class Circle(context: Context) : Figure2D(context){
 
     private fun resizeCircle(){
         radius = sqrt((currentThreadEvent.x - points[0].x).pow(2) +(currentThreadEvent.y - points[0].y).pow(2))
+        calculateFieldAndPerimeterOfFigure()
     }
 
     private fun resetTouchEventActions(){
@@ -129,11 +130,19 @@ class Circle(context: Context) : Figure2D(context){
         points = arrayListOf(
             Point(0.5f*width, 0.5f*height)
         )
+        calculateFieldAndPerimeterOfFigure()
     }
 
     override fun findFigureMiddlePoint() {
         figureMiddlePoint = points[0]
         this.invalidate()
     }
+
+    override fun calculateFieldAndPerimeterOfFigure() {
+        field = (radius/100) * (radius/100) * PI
+        perimeter = 2 * Math.PI * (radius/100)
+        displayFieldAndPerimeterOfFigure(field,perimeter)
+    }
+
 
 }

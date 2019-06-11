@@ -179,7 +179,7 @@ class Square(context: Context) : Figure2D(context){
         points[3].y = figureMiddlePoint!!.y - diffFromMiddle.toFloat()
 
         resizeSquareRotate(angle)
-
+        calculateFieldAndPerimeterOfFigure()
 
     }
 
@@ -210,6 +210,7 @@ class Square(context: Context) : Figure2D(context){
             Point(0.25f*width, (0.5f*height)+lineSize)
         )
         angleStart = Point(0.25f*width, (0.5f*height)-lineSize)
+        calculateFieldAndPerimeterOfFigure()
     }
 
     override fun findFigureMiddlePoint(){
@@ -217,5 +218,12 @@ class Square(context: Context) : Figure2D(context){
         val midYLine = abs(points[0].y - points[2].y)/2
         figureMiddlePoint = Point(min(points[0].x ,points[2].x)+midXLine,min(points[0].y ,points[2].y)+midYLine)
         this.invalidate()
+    }
+
+    override fun calculateFieldAndPerimeterOfFigure() {
+        lineSize = countDistance(points[0], points[1])
+        field = (lineSize * lineSize) / 10000.0
+        perimeter = lineSize * 4 / 100.0
+        displayFieldAndPerimeterOfFigure(field,perimeter)
     }
 }

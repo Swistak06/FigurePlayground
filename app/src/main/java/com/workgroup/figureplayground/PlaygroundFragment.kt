@@ -26,6 +26,7 @@ class PlaygroundFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_playground, container, false)
         setBottomBarOnClickListeners(view)
         view.playgroundFrame.addView(figure2D)
+        figure2D!!.setFieldandPerimeterTV(view.FieldOfFigureTV, view.PerimeterTV)
         return view
     }
 
@@ -82,4 +83,5 @@ class PlaygroundFragment : Fragment() {
     interface PlaygroundFrListener {
         fun backToMenuClick()
     }
+
 }

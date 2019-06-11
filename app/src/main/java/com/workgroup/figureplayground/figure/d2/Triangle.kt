@@ -80,6 +80,7 @@ class Triangle(context: Context) : Figure2D(context) {
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
             moveSinglePoint(points[pointTouched], eventPoint)
             findFigureMiddlePoint()
+            calculateFieldAndPerimeterOfFigure()
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
@@ -164,6 +165,7 @@ class Triangle(context: Context) : Figure2D(context) {
         points = arrayListOf(Point(0.5f*width, 0.25f*height),
             Point(0.25f*width, 0.75f*height),
             Point(0.75f*width, 0.75f*height))
+        calculateFieldAndPerimeterOfFigure()
     }
 
     private fun resetTouchEventActions(){
@@ -172,5 +174,27 @@ class Triangle(context: Context) : Figure2D(context) {
         singlePointMovementEnabled = false
         cameraEventEnabled = false
         timer = 0
+    }
+
+    override fun calculateFieldAndPerimeterOfFigure() {
+        var line02 = countDistance(points[2],points[0])
+        var line12 = countDistance(points[1],points[2])
+        val line01 = countDistance(points[0],points[1])
+        field = (0.5 * Math.sin(calculateAngleBetweenLines()) * line02 * line12)/10000
+        perimeter = (line01+ line12 + line02)/100.0
+        displayFieldAndPerimeterOfFigure(field,perimeter)
+    }
+
+    fun calculateAngleBetweenLines() : Double{
+        var vecAX = points[0].x - points[2].x
+        var vecAY = points[0].y - points[2].y
+        var vecBX = points[1].x - points[2].x
+        var vecBY = points[1].y - points[2].y
+
+        var ilSkal = vecAX * vecBX + vecAY * vecBY
+        var ilDL = sqrt((vecAX * vecAX) + (vecAY * vecAY)) * sqrt((vecBX * vecBX) + (vecBY * vecBY))
+
+        var cosi = ilSkal/ilDL
+        return Math.acos(cosi .toDouble())
     }
 }
