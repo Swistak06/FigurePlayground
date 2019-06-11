@@ -89,10 +89,10 @@ class MainActivity : AppCompatActivity(),MainMenuFragment.MainMenuFrListener, Pl
         else{
             return when(position){
                 //TODO create 3d figured and change this
-                1 -> Cube(this)
-                2 -> Pyramid(this) //
-                3 -> Cuboid(this) //Cuboid
-                4 -> Cube(this)
+                0 -> Cube(this)
+                1 -> Pyramid(this) //
+                2 -> Cuboid(this) //Cuboid
+                3 -> Cube(this)
                 else -> Cube(this) //Cube
             }
         }
