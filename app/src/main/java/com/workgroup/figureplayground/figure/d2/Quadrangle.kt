@@ -34,6 +34,7 @@ class Quadrangle(context: Context) : Figure2D(context){
             Point(0.75f*width, 0.6f*height),
             Point(0.25f*width, 0.6f*height)
         )
+        calculateFieldAndPerimeterOfFigure()
     }
 
     override fun drawInitialFigure(canvas : Canvas) {
@@ -96,6 +97,7 @@ class Quadrangle(context: Context) : Figure2D(context){
         //Resize whole figure
         pointToMove.x = eventPoint.x
         pointToMove.y = eventPoint.y
+        calculateFieldAndPerimeterOfFigure()
     }
 
     private fun resetTouchEventActions(){
@@ -170,5 +172,10 @@ class Quadrangle(context: Context) : Figure2D(context){
         figureMiddlePoint = Point((functionB.y - functionA.y) / (functionA.x - functionB.x),
             functionA.x * (functionB.y - functionA.y) / (functionA.x - functionB.x) + functionA.y)
         this.invalidate()
+    }
+
+    override fun calculateFieldAndPerimeterOfFigure() {
+        perimeter = (countDistance(points[0],points[1]) + countDistance(points[1],points[2]) + countDistance(points[2],points[3]) + countDistance(points[3],points[0]))/100.0
+        displayFieldAndPerimeterOfFigure(-1.0,perimeter)
     }
 }

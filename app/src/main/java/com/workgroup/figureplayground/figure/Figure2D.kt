@@ -5,6 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Vibrator
 import android.view.View
+import android.widget.TextView
+import com.workgroup.figureplayground.PlaygroundFragment
+import kotlinx.android.synthetic.main.fragment_playground.*
+import org.w3c.dom.Text
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.util.ArrayList
 import kotlin.math.atan
 import kotlin.math.pow
@@ -17,6 +23,11 @@ open class Figure2D(context: Context) : View(context), Figure {
     var pointTouched = 0
     var timer = 0L
     protected val paint = Paint()
+    var field = 0.0
+    var perimeter = 0.0
+    var fieldTV : TextView? = null
+    var perimeterTV : TextView? = null
+
 
     //X and Y of current touch
     protected var currentThreadEvent = Point(0f,0f)
@@ -79,5 +90,25 @@ open class Figure2D(context: Context) : View(context), Figure {
             -figureMiddlePoint.x *(eventPoint.y - figureMiddlePoint.y) / (eventPoint.x - figureMiddlePoint.x) + figureMiddlePoint.y)
 
         return atan((functionA.x - functionB.x).toDouble()/(functionA.x * functionB.x + 1).toDouble())
+    }
+    protected open fun calculateFieldAndPerimeterOfFigure(){}
+    protected fun displayFieldAndPerimeterOfFigure(field : Double, perimeter : Double){
+        if(field < 0)
+            fieldTV!!.text = ""
+        else
+            fieldTV!!.text = "Field: " + roundToThreeDecimals(field)
+        perimeterTV!!.text = "Perimeter: " + roundToThreeDecimals(perimeter)
+    }
+
+    fun setFieldandPerimeterTV(fieldTV : TextView, perimeterTV : TextView){
+        this.fieldTV = fieldTV
+        this.perimeterTV = perimeterTV
+    }
+
+    fun roundToThreeDecimals(roundedNumber: Double):String{
+        val df = DecimalFormat("#.###")
+        df.roundingMode = RoundingMode.CEILING
+
+        return df.format(roundedNumber)
     }
 }

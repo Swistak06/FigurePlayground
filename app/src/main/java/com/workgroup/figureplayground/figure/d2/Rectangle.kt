@@ -45,6 +45,7 @@ class Rectangle(context: Context) : Figure2D(context){
             Point(0.25f*width, 0.6f*height)
         )
         generateMiddlePoints()
+        calculateFieldAndPerimeterOfFigure()
     }
 
     private fun generateMiddlePoints(){
@@ -117,6 +118,7 @@ class Rectangle(context: Context) : Figure2D(context){
             moveRectangleSide(middlePoints[pointTouched], eventPoint)
             generateMiddlePoints()
             findFigureMiddlePoint()
+            calculateFieldAndPerimeterOfFigure()
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
@@ -257,5 +259,13 @@ class Rectangle(context: Context) : Figure2D(context){
         singlePointMovementEnabled = false
         cameraEventEnabled = false
         timer = 0
+    }
+
+    override fun calculateFieldAndPerimeterOfFigure() {
+        val lineX = countDistance(points[0], points[1])
+        val lineY = countDistance(points[1], points[2])
+        field = lineX * lineY /10000.0
+        perimeter = (2 * lineX + 2 * lineY)/100.0
+        displayFieldAndPerimeterOfFigure(field,perimeter)
     }
 }
