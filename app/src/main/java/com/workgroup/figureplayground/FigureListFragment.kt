@@ -28,8 +28,9 @@ class FigureListFragment : Fragment() {
                 ,FigureListItem(R.drawable.rectangle, "Rectangle"),FigureListItem(R.drawable.diamond, "Quadrangle"),FigureListItem(R.drawable.circle, "Circle"))
         }
         else{
-            itemList = arrayOf(FigureListItem(R.drawable.flat_fig, "Cube"),FigureListItem(R.drawable.flat_fig, "Sphere")
-                ,FigureListItem(R.drawable.flat_fig, "Cone"),FigureListItem(R.drawable.flat_fig, "cuboid"),FigureListItem(R.drawable.flat_fig, "somhing"))
+            itemList = arrayOf(FigureListItem(R.drawable.cube, "Cube"),FigureListItem(R.drawable.pyramid, "Pyramid"),
+                FigureListItem(R.drawable.cuboid, "Cuboid"), FigureListItem(R.drawable.sphere, "Sphere"),
+                FigureListItem(R.drawable.cone, "Cone"))
         }
 
         var listView = view.FlatFiguresList

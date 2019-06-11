@@ -75,12 +75,12 @@ class Playground3DFragment : Fragment() {
     }
 
     companion object {
-        const val IC_ROTATE_X_ENABLED = R.drawable.x_icon_black
-        const val IC_ROTATE_Y_ENABLED = R.drawable.y_icon_black
-        const val IC_ROTATE_Z_ENABLED = R.drawable.z_icon_black
-        const val IC_ROTATE_X_DISABLED = R.drawable.x_icon_white
-        const val IC_ROTATE_Y_DISABLED = R.drawable.y_icon_white
-        const val IC_ROTATE_Z_DISABLED = R.drawable.z_icon_white
+        const val IC_ROTATE_X_ENABLED = R.drawable.x_icon_white
+        const val IC_ROTATE_Y_ENABLED = R.drawable.y_icon_white
+        const val IC_ROTATE_Z_ENABLED = R.drawable.z_icon_white
+        const val IC_ROTATE_X_DISABLED = R.drawable.x_icon_black
+        const val IC_ROTATE_Y_DISABLED = R.drawable.y_icon_black
+        const val IC_ROTATE_Z_DISABLED = R.drawable.z_icon_black
     }
 
     interface Playground3DFrListener {

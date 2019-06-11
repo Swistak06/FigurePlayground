@@ -74,10 +74,10 @@ class PlaygroundFragment : Fragment() {
     }
 
     companion object {
-        const val IC_MOVE_ENABLED = R.drawable.move_black_24
-        const val IC_MOVE_DISABLED = R.drawable.move_white_24
-        const val IC_ROTATE_ENABLED = R.drawable.rotate_black_24
-        const val IC_ROTATE_DISABLED = R.drawable.rotate_white_24
+        const val IC_MOVE_ENABLED = R.drawable.move_white_24
+        const val IC_MOVE_DISABLED = R.drawable.move_black_24
+        const val IC_ROTATE_ENABLED = R.drawable.rotate_white_24
+        const val IC_ROTATE_DISABLED = R.drawable.rotate_black_24
     }
 
     interface PlaygroundFrListener {
