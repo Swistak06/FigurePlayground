@@ -10,6 +10,8 @@ import com.workgroup.figureplayground.figure.CameraMode
 import com.workgroup.figureplayground.figure.Figure2D
 import com.workgroup.figureplayground.figure.Point
 import kotlin.concurrent.thread
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Quadrangle(context: Context) : Figure2D(context){
 
@@ -88,10 +90,16 @@ class Quadrangle(context: Context) : Figure2D(context){
     }
 
     private fun rotateAllPoints(startEventPoint: Point, eventPoint: Point) {
-        //TODO implement rotation of all points
-        //calculate the angle change of vertical event movement
-        //...
+
         val angle = findAngle(startEventPoint, figureMiddlePoint, eventPoint)
+        for(i in 0 until points.size){
+
+            val x = (startCameraEventPoints[i].x - figureMiddlePoint!!.x).toDouble()
+            val y = (startCameraEventPoints[i].y - figureMiddlePoint!!.y).toDouble()
+
+            points[i].x = ((x * cos(-2 * angle)) - (y * sin(-2 * angle))).toFloat() + figureMiddlePoint!!.x
+            points[i].y = ((x * sin(-2 * angle)) + (y * cos(-2 * angle))).toFloat() + figureMiddlePoint!!.y
+        }
     }
     private fun moveSinglePoint(pointToMove: Point, eventPoint: Point) {
         //Resize whole figure
@@ -139,8 +147,10 @@ class Quadrangle(context: Context) : Figure2D(context){
             }
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && cameraEventEnabled){
-            if(cameraMode == CameraMode.MOVE)
+            if(cameraMode == CameraMode.MOVE) {
                 moveAllPoints(startCameraEventTouchPoint, eventPoint)
+                findFigureMiddlePoint()
+            }
             else if(cameraMode == CameraMode.ROTATE) {
                 rotateAllPoints(startCameraEventTouchPoint, eventPoint)
             }
@@ -148,6 +158,7 @@ class Quadrangle(context: Context) : Figure2D(context){
         }
         else if(event.action == android.view.MotionEvent.ACTION_MOVE && singlePointMovementEnabled){
             moveSinglePoint(points[pointTouched], eventPoint)
+            findFigureMiddlePoint()
             this.invalidate()
         }
         else if(event.action == android.view.MotionEvent.ACTION_UP){
@@ -158,15 +169,11 @@ class Quadrangle(context: Context) : Figure2D(context){
         return true
     }
     override fun findFigureMiddlePoint(){
-        //find 2 points in the middle of 2 different lines
-        val dPoint = Point((points[0].x + points[2].x)/2, (points[0].y + points[2].y)/2)
-        val ePoint = Point((points[0].x + points[1].x)/2, (points[0].y + points[1].y)/2)
-
         //find function coefficients using above points and opposed points, x is a and y is b
-        val functionA = Point((dPoint.y - points[1].y) / (dPoint.x - points[1].x),
-            -points[1].x *(dPoint.y - points[1].y) / (dPoint.x - points[1].x) + points[1].y)
-        val functionB = Point((ePoint.y - points[2].y) / (ePoint.x - points[2].x),
-            -points[2].x *(ePoint.y - points[2].y) / (ePoint.x - points[2].x) + points[2].y)
+        val functionA = Point((points[3].y - points[1].y) / (points[3].x - points[1].x),
+            -points[1].x *(points[3].y - points[1].y) / (points[3].x - points[1].x) + points[1].y)
+        val functionB = Point((points[0].y - points[2].y) / (points[0].x - points[2].x),
+            -points[2].x *(points[0].y - points[2].y) / (points[0].x - points[2].x) + points[2].y)
 
         //find the middle point
         figureMiddlePoint = Point((functionB.y - functionA.y) / (functionA.x - functionB.x),
