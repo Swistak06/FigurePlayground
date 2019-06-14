@@ -31,7 +31,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="16dp"/>
         <ImageButton
-                android:src="@drawable/z_icon_white"
+                android:src="@drawable/z_icon_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/rotateZBtn"
@@ -41,7 +41,7 @@
                 android:layout_marginTop="8dp" android:layout_marginBottom="8dp" android:background="#00FFFFFF"
                 android:contentDescription="Move"/>
         <ImageButton
-                android:src="@drawable/x_icon_black"
+                android:src="@drawable/x_icon_white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/rotateXBtn"
@@ -51,7 +51,7 @@
                 android:layout_marginEnd="24dp" app:layout_constraintEnd_toStartOf="@+id/rotateYBtn"
                 android:layout_marginRight="24dp" android:adjustViewBounds="true"/>
         <ImageButton
-                android:src="@drawable/y_icon_white"
+                android:src="@drawable/y_icon_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/rotateYBtn"
