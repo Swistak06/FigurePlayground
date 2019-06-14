@@ -1,18 +1,47 @@
 package com.workgroup.figureplayground
 
+import android.app.Activity
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getSystemService
 import com.workgroup.figureplayground.figure.Figure3D
 import kotlinx.android.synthetic.main.fragment_playground3_d.*
 import kotlinx.android.synthetic.main.fragment_playground3_d.view.*
+import kotlin.math.abs
 
 
-class Playground3DFragment : Fragment() {
+class Playground3DFragment : Fragment(), SensorEventListener {
 
+    private lateinit var sensorManager : SensorManager
+    private var isAccelerometerXEnabled = false
+    private var isAccelerometerZEnabled = false
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(isAccelerometerZEnabled) {
+            if (abs(event!!.values[0]) > 0.3) {
+                var speed = (event!!.values[0] / 9.81f)
+                figure!!.setZrot(-speed * (Math.PI.toFloat() / 180))
+            }
+        }
+        if(isAccelerometerXEnabled){
+            if(abs( - event!!.values[2]) > 0.2){
+                var speed = (event!!.values[2]/9.81f)
+                figure!!.setXrot(-speed *(-Math.PI.toFloat()/180))
+            }
+        }
+        figure!!.invalidate()
+    }
 
     private var figure : Figure3D? = null
 
@@ -26,7 +55,26 @@ class Playground3DFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_playground3_d, container, false)
         setBottomBarOnClickListeners(view)
         view.playgroundFrame3D.addView(figure)
+        this.registerSensorListener()
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sensorManager = this.activity!!.getSystemService(Activity.SENSOR_SERVICE) as SensorManager
+    }
+
+
+    fun registerSensorListener(){
+        sensorManager.registerListener(
+            this,
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_FASTEST
+        )
+    }
+
+    fun unregisterSensorListener(){
+        sensorManager.unregisterListener(this);
     }
 
     override fun onAttach(context: Context) {
