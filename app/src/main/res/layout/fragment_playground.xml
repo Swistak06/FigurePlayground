@@ -42,7 +42,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="16dp"/>
         <ImageButton
-                android:src="@drawable/move_black_24"
+                android:src="@drawable/move_white_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/moveBtn"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="8dp" android:layout_marginBottom="8dp" android:background="#00FFFFFF"
                 android:contentDescription="Move"/>
         <ImageButton
-                android:src="@drawable/rotate_white_24"
+                android:src="@drawable/rotate_black_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/rotateBtn"
