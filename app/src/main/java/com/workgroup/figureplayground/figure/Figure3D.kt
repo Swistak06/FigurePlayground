@@ -100,6 +100,26 @@ open class Figure3D(context: Context) : View(context), Figure {
         return sqrt((pointA.x - pointB.x).pow(2) + (pointA.y - pointB.y).pow(2))
     }
 
+     fun setXrot(angle : Float){
+        changedXRot += angle
+    }
+    fun setYrot(angle : Float){
+        changedYRot += angle
+    }
+    fun setZrot(angle : Float){
+        changedZRot += angle
+    }
+
+    fun getXrot() : Float{
+        return changedXRot
+    }
+    fun getYrot() : Float{
+        return changedYRot
+    }
+    fun getZrot() : Float{
+        return changedZRot
+    }
+
 
 
 
