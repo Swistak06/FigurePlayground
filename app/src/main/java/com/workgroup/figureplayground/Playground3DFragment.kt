@@ -21,20 +21,25 @@ import kotlin.math.abs
 class Playground3DFragment : Fragment(), SensorEventListener {
 
     private lateinit var sensorManager : SensorManager
-    private var isAccelerometerXEnabled = false
-    private var isAccelerometerZEnabled = false
+
+    private var figure : Figure3D? = null
+    private var listener: Playground3DFrListener? = null
+
+    private var accRotationX = false
+    private var accRotationZ = false
+
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
     override fun onSensorChanged(event: SensorEvent?) {
-        if(isAccelerometerZEnabled) {
+        if(accRotationZ) {
             if (abs(event!!.values[0]) > 0.3) {
                 var speed = (event!!.values[0] / 9.81f)
                 figure!!.setZrot(-speed * (Math.PI.toFloat() / 180))
             }
         }
-        if(isAccelerometerXEnabled){
+        if(accRotationX){
             if(abs( - event!!.values[2]) > 0.2){
                 var speed = (event!!.values[2]/9.81f)
                 figure!!.setXrot(-speed *(-Math.PI.toFloat()/180))
@@ -42,11 +47,6 @@ class Playground3DFragment : Fragment(), SensorEventListener {
         }
         figure!!.invalidate()
     }
-
-    private var figure : Figure3D? = null
-
-
-    private var listener: Playground3DFrListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,23 +99,59 @@ class Playground3DFragment : Fragment(), SensorEventListener {
         }
         view.rotateXBtn.setOnClickListener {
             figure!!.selectedRotation = Figure3D.Rotation.X
+            setAllBtnDisabled()
             rotateXBtn.setImageResource(IC_ROTATE_X_ENABLED)
-            rotateYBtn.setImageResource(IC_ROTATE_Y_DISABLED)
-            rotateZBtn.setImageResource(IC_ROTATE_Z_DISABLED)
         }
         view.rotateYBtn.setOnClickListener {
             figure!!.selectedRotation = Figure3D.Rotation.Y
-            rotateXBtn.setImageResource(IC_ROTATE_X_DISABLED)
+            setAllBtnDisabled()
             rotateYBtn.setImageResource(IC_ROTATE_Y_ENABLED)
-            rotateZBtn.setImageResource(IC_ROTATE_Z_DISABLED)
         }
         view.rotateZBtn.setOnClickListener {
             figure!!.selectedRotation = Figure3D.Rotation.Z
-            rotateXBtn.setImageResource(IC_ROTATE_X_DISABLED)
-            rotateYBtn.setImageResource(IC_ROTATE_Y_DISABLED)
+            setAllBtnDisabled()
             rotateZBtn.setImageResource(IC_ROTATE_Z_ENABLED)
         }
+        view.horizBtn.setOnClickListener {
+            figure!!.selectedRotation = Figure3D.Rotation.NONE
+            setAllBtnDisabled()
 
+            if(accRotationZ){
+                accRotationZ = false
+                horizBtn.setImageResource(IC_ACC_Z_DISABLED)
+            }
+            else{
+                accRotationZ = true
+                horizBtn.setImageResource(IC_ACC_Z_ENABLED)
+            }
+
+            if(accRotationX)
+                vertBtn.setImageResource(IC_ACC_X_ENABLED)
+
+        }
+        view.vertBtn.setOnClickListener {
+            figure!!.selectedRotation = Figure3D.Rotation.NONE
+            setAllBtnDisabled()
+            if(accRotationX){
+                accRotationX = false
+                vertBtn.setImageResource(IC_ACC_X_DISABLED)
+            }
+            else{
+                accRotationX = true
+                vertBtn.setImageResource(IC_ACC_X_ENABLED)
+            }
+
+            if(accRotationZ)
+                horizBtn.setImageResource(IC_ACC_Z_ENABLED)
+        }
+
+    }
+    private fun setAllBtnDisabled(){
+        rotateXBtn.setImageResource(IC_ROTATE_X_DISABLED)
+        rotateYBtn.setImageResource(IC_ROTATE_Y_DISABLED)
+        rotateZBtn.setImageResource(IC_ROTATE_Z_DISABLED)
+        vertBtn.setImageResource(IC_ACC_X_DISABLED)
+        horizBtn.setImageResource(IC_ACC_Z_DISABLED)
     }
 
     fun setFigure(figure: Figure3D) {
@@ -129,6 +165,11 @@ class Playground3DFragment : Fragment(), SensorEventListener {
         const val IC_ROTATE_X_DISABLED = R.drawable.x_icon_black
         const val IC_ROTATE_Y_DISABLED = R.drawable.y_icon_black
         const val IC_ROTATE_Z_DISABLED = R.drawable.z_icon_black
+
+        const val IC_ACC_X_ENABLED = R.drawable.vert_white_24
+        const val IC_ACC_Z_ENABLED = R.drawable.horiz_white_24
+        const val IC_ACC_X_DISABLED = R.drawable.vert_black_24
+        const val IC_ACC_Z_DISABLED = R.drawable.horiz_black_24
     }
 
     interface Playground3DFrListener {

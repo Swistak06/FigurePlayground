@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 
 open class Figure3D(context: Context) : View(context), Figure {
 
-    enum class Rotation { X, Y, Z}
+    enum class Rotation { X, Y, Z, NONE}
 
     var selectedRotation = Rotation.X
     protected val paint = Paint()
@@ -101,23 +101,13 @@ open class Figure3D(context: Context) : View(context), Figure {
     }
 
      fun setXrot(angle : Float){
-        changedXRot += angle
+        xRot += angle
     }
     fun setYrot(angle : Float){
-        changedYRot += angle
+        yRot += angle
     }
     fun setZrot(angle : Float){
-        changedZRot += angle
-    }
-
-    fun getXrot() : Float{
-        return changedXRot
-    }
-    fun getYrot() : Float{
-        return changedYRot
-    }
-    fun getZrot() : Float{
-        return changedZRot
+        zRot += angle
     }
 
 
