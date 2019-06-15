@@ -59,5 +59,26 @@
                 app:layout_constraintEnd_toStartOf="@+id/rotateZBtn" android:layout_marginEnd="24dp"
                 android:layout_marginRight="24dp" android:background="#00FFFFFF"
                 android:contentDescription="Rotate"/>
+        <ImageButton
+                android:src="@drawable/vert_black_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vertBtn"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                android:background="#00FFFFFF"
+                android:contentDescription="Rotate"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="24dp" app:layout_constraintEnd_toStartOf="@+id/horizBtn"
+                android:layout_marginRight="24dp"/>
+        <ImageButton
+                android:src="@drawable/horiz_black_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/horizBtn"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                android:background="#00FFFFFF"
+                android:contentDescription="Rotate"
+                android:adjustViewBounds="true" android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/rotateXBtn" android:layout_marginRight="24dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
